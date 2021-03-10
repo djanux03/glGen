@@ -64,7 +64,7 @@ int main(void)
 
     Shader shader("/home/djanux/dev/cpp/glGen/shaders/vertex_core.glsl", "/home/djanux/dev/cpp/glGen/shaders/fragment_core.glsl");
     
-
+    
     // vertices 
     float vertices[] = 
     {
@@ -122,7 +122,7 @@ int main(void)
 
 
     // textures
-    /*
+   
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
     
@@ -136,13 +136,14 @@ int main(void)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-    // load image
+    
     int width, height, nChannels;
-    unsigned char* data = stbi_load("assets/tree.png", &width, &height, &nChannels, 0);
+    stbi_set_flip_vertically_on_load(true);
+    unsigned char* data = stbi_load("/home/djanux/dev/cpp/glGen/assets/block.png", &width, &height, &nChannels, 0);
 
     if (data)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
@@ -151,8 +152,8 @@ int main(void)
     }
     stbi_image_free(data);
 
-    */
-   
+    shader.activate();
+    shader.setInt("texture1", 0);
     
 
     // main loop
@@ -164,6 +165,9 @@ int main(void)
         //render
         glClearColor(0.2f, 0.3f, 0.3, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture1);
 
         // trans = glm::rotate(trans, glm::radians((float)glfwGetTime() / 100.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         // shader.activate();

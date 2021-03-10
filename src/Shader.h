@@ -25,7 +25,7 @@ public:
 
 	// uniform functions
 	void setMat4(const std::string& name, glm::mat4 value);
-
+	void setInt(const std::string& name, int value);
 
 };
 
