@@ -18,6 +18,7 @@ void error_callback(int error, const char* description)
 }
 void frameBuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
+float mixVal = 0.5f;
 std::string loadShaderSrc(const char* filename);
 int main(void)
 {
@@ -31,17 +32,17 @@ int main(void)
     std::cout << vec.x << ' ' << vec.y << ' ' << vec.z << std::endl;
     */
 
-   glfwSetErrorCallback(error_callback);
+    glfwSetErrorCallback(error_callback);
     // Initialize GLFW
-    int success; 
+    int success;
     char infoLog[512];
     glfwInit();
-    
+
     //openGL version 4.6
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    
+
     GLFWwindow* window = glfwCreateWindow(800, 600, "OPENGL Window", NULL, NULL);
     if (window == NULL)
     {
@@ -62,20 +63,20 @@ int main(void)
     /// <summary>
 
 
-    Shader shader("/home/djanux/dev/cpp/glGen/shaders/vertex_core.glsl", "/home/djanux/dev/cpp/glGen/shaders/fragment_core.glsl");
-    
-    
+    Shader shader("vertex_core.glsl", "fragment_core.glsl");
+
+
     // vertices 
-    float vertices[] = 
+    float vertices[] =
     {
         // rectangle            colors              texture coordinates
        -0.5f, -0.5f, 0.0f,      1.0f, 1.0f, 0.5f,   0.0f, 0.0f,// bottom left
        -0.5f,  0.5f, 0.0f,      0.9f, 0.6f, 0.75f,  0.0f, 1.0f,// top left
         0.5f, -0.5f, 0.0f,      0.2f, 1.0f, 0.8f,   1.0f, 0.0f,// bottom right
         0.5f, 0.5f, 0.0f,      1.0f, 0.7f, 1.0f,     1.0f, 1.0f// top right
-       
+
     };
-    unsigned int indices[] = 
+    unsigned int indices[] =
     {
         0, 1, 2, // first triangle
         3, 1, 2 // second triangle 
@@ -89,27 +90,30 @@ int main(void)
 
     // bind VAO
     glBindVertexArray(VAO);
-    
+
     // bind VBO
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-    
+
     // set attribute pointer
 
     // positions
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
-    
+
     // color
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
-    
 
-    /*
+   
+
+
+    
     glm::mat4 trans = glm::mat4(1.0f);
-    trans = glm::rotate(trans, glm::radians(15.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    shader.activate();
-    shader.setMat4("transform", trans);
+    //trans = glm::rotate(trans, glm::radians(15.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+    //shader.activate();
+    //shader.setMat4("transform", trans);
+    /*
     glm::mat4 trans2 = glm::mat4(1.0f);
     //trans2 = glm::scale(trans2, glm::vec3(2.5f));
     trans2 = glm::rotate(trans2, glm::radians(15.0f), glm::vec3(0.0f, 0.0f, 1.0f));
@@ -122,11 +126,11 @@ int main(void)
 
 
     // textures
-   
+
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glEnableVertexAttribArray(2);
-    
-    unsigned int texture1;
+
+    unsigned int texture1, texture2;
     glGenTextures(1, &texture1);
     glBindTexture(GL_TEXTURE_2D, texture1);
 
@@ -136,14 +140,14 @@ int main(void)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-    
+
     int width, height, nChannels;
     stbi_set_flip_vertically_on_load(true);
-    unsigned char* data = stbi_load("/home/djanux/dev/cpp/glGen/assets/block.png", &width, &height, &nChannels, 0);
+    unsigned char* data = stbi_load("block.png", &width, &height, &nChannels, 0);
 
     if (data)
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
     else
@@ -151,10 +155,40 @@ int main(void)
         std::cout << "Failed to load texture" << std::endl;
     }
     stbi_image_free(data);
+   
 
-    shader.activate();
-    shader.setInt("texture1", 0);
     
+    glGenTextures(1, &texture2);
+    glBindTexture(GL_TEXTURE_2D, texture2);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+
+   
+    
+    unsigned char* data1 = stbi_load("cobblestone.png", &width, &height, &nChannels, 0);
+
+    if (data)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data1);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(data1);
+
+    float timeValue = glfwGetTime();
+    shader.activate();
+    
+    shader.setInt("texture1", 0);
+    shader.setInt("texture2", 1);
+
 
     // main loop
     while (!glfwWindowShouldClose(window))
@@ -166,19 +200,25 @@ int main(void)
         glClearColor(0.2f, 0.3f, 0.3, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
+        // texture 1
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, texture1);
-
+        // texture 2
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, texture2);
+        shader.setFloat("mixVal", mixVal);
         // trans = glm::rotate(trans, glm::radians((float)glfwGetTime() / 100.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         // shader.activate();
         // shader.setMat4("transform", trans);
 
         // draw shapes
         glBindVertexArray(VAO);
+        trans = glm::rotate(trans, glm::radians(timeValue / 100.0f), glm::vec3(0.1f, 0.1f, 0.5f));
+        shader.setMat4("transform", trans);
         shader.activate();
-        
+
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        
+
         //trans2 = glm::rotate(trans2, glm::radians((float)glfwGetTime() / -100.0f), glm::vec3(0.0f, 0.0f, 1.0f));
         //shader2.activate();
         //shader2.setMat4("transform", trans2);
@@ -202,5 +242,25 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
     {
         glfwSetWindowShouldClose(window, true);
+    }
+    // change mix value
+    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+    {
+       
+        mixVal += .05f;
+        if (mixVal > 1)
+        {
+            mixVal = 1.0f;
+        }
+        
+    }
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+    {
+       
+        mixVal -= .05f;
+        if (mixVal < 0)
+        {
+            mixVal = 0.0f;
+        }
     }
 }
