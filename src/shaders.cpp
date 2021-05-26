@@ -7,7 +7,7 @@ Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath)
 
 	GLuint vertexShader = compileShader(vertexShaderPath, GL_VERTEX_SHADER);
 	GLuint fragShader = compileShader(fragmentShaderPath, GL_FRAGMENT_SHADER);
-	
+
 	id = glCreateProgram();
 	glAttachShader(id, vertexShader);
 	glAttachShader(id, fragShader);
@@ -20,7 +20,7 @@ Shader::Shader(const char* vertexShaderPath, const char* fragmentShaderPath)
 		std::cout << "Linking error: " << std::endl << infoLog << std::endl;
 
 	}
-	
+
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragShader);
 
@@ -33,6 +33,7 @@ void Shader::activate()
 }
 std::string Shader::loadShaderSrc(const char* filename)
 {
+	
 	std::ifstream file;
 	std::stringstream buf;
 
@@ -78,4 +79,12 @@ void Shader::setMat4(const std::string& name, glm::mat4 value)
 {
 	glUniformMatrix4fv(glGetUniformLocation(id, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 
+}
+void Shader::setInt(const std::string& name, int value)
+{
+	glUniform1i(glGetUniformLocation(id, name.c_str()), value);
+}
+void Shader::setFloat(const std::string& name, int value)
+{
+	glUniform1f(glGetUniformLocation(id, name.c_str()), value);
 }
