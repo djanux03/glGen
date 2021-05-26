@@ -11,8 +11,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-class Shader 
-{	
+class Shader
+{
 public:
 	unsigned int id;
 
@@ -26,6 +26,7 @@ public:
 	// uniform functions
 	void setMat4(const std::string& name, glm::mat4 value);
 	void setInt(const std::string& name, int value);
+	void setFloat(const std::string& name, int value);
 
 };
 
