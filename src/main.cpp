@@ -79,7 +79,7 @@ int main(void)
 
     glEnable(GL_DEPTH_TEST);
 
-    Shader shader("shaders/glsl/vertex_core.glsl", "shaders/glsl/fragment_core.glsl");
+    Shader shader("/home/edjan03/dev/c/glGen/shaders/glsl/vertex_core.glsl", "/home/edjan03/dev/c/glGen/shaders/glsl/fragment_core.glsl");
 
 
     // vertices 
@@ -170,7 +170,7 @@ int main(void)
 
     int width, height, nChannels;
     stbi_set_flip_vertically_on_load(true);
-    unsigned char* data = stbi_load("grass.png", &width, &height, &nChannels, 0);
+    unsigned char* data = stbi_load("/home/edjan03/dev/c/glGen/assets/block.png", &width, &height, &nChannels, 0);
 
     if (data)
     {
@@ -187,14 +187,15 @@ int main(void)
 
     glGenTextures(1, &texture2);
     glBindTexture(GL_TEXTURE_2D, texture2);
-
-    /*glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+/*
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    */
-    data = stbi_load("cobblestone.png", &width, &height, &nChannels, 0);
+ */  
+    
+    data = stbi_load("/home/edjan03/dev/c/glGen/assets/grass.png", &width, &height, &nChannels, 0);
 
     if (data)
     {
@@ -308,22 +309,22 @@ void processInput(GLFWwindow* window)
     }
     if (Keyboard::key(GLFW_KEY_W))
     {
-        z -= 0.001f;
-        rotate -= 0.1f;
+        z -= 0.01f;
+       rotate -= 0.1f;
     }
     if (Keyboard::key(GLFW_KEY_A))
     {   
-        x += 0.001;
-        rotate = 0.1f;
+        x += 0.01;
+      rotate = 0.1f;
     }
     if (Keyboard::key(GLFW_KEY_S))
     {
-        z += 0.001f;
+        z += 0.01f;
     }
     if (Keyboard::key(GLFW_KEY_D))
     {
-        x -= 0.001f;
-        rotate -= 0.1f;
+        x -= 0.01f;
+        rotate -= 0.01f;
        
     }
  
